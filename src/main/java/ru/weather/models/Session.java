@@ -21,6 +21,7 @@ public class Session {
     private UUID id;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
+    @Column(name = "expires_at")
     private LocalDateTime expiresAt;
 }

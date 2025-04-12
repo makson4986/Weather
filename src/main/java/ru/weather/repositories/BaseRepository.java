@@ -5,6 +5,8 @@ import jakarta.persistence.PersistenceContext;
 import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 public abstract class BaseRepository<I, E> {
     @PersistenceContext
     protected EntityManager entityManager;
@@ -42,9 +44,9 @@ public abstract class BaseRepository<I, E> {
     }
 
     @Transactional
-    public E findById(I id) {
+    public Optional<E> findById(I id) {
         try {
-            return entityManager.find(clazz, id);
+            return Optional.ofNullable(entityManager.find(clazz, id));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
