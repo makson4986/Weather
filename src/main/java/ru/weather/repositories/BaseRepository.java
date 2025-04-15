@@ -17,9 +17,10 @@ public abstract class BaseRepository<I, E> {
     }
 
     @Transactional
-    public void save(E entity) {
+    public E save(E entity) {
         try {
             entityManager.persist(entity);
+            return entity;
         } catch (HibernateException e) {
             throw new RuntimeException(e);
         }

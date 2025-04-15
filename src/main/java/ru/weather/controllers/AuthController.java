@@ -5,10 +5,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import ru.weather.dto.UserDto;
+import ru.weather.models.Session;
 import ru.weather.services.AuthService;
 import ru.weather.services.SessionService;
 
@@ -26,31 +28,49 @@ public class AuthController {
 
     @GetMapping("/signup")
     public String signUp(Model model) {
-        model.addAttribute("RegistrationDto", new UserDto());
+        model.addAttribute("userDto", new UserDto());
         return "sign-up";
     }
 
     @PostMapping("/signup")
     public String signUp(@ModelAttribute UserDto userDto, HttpServletResponse resp) {
-        authService.signUp(userDto);
+        Session session = authService.signUp(userDto);
 
-        String sessionId = sessionService.getSessionByUsername(userDto.getUsername()).getId().toString();
-
-        Cookie cookie = new Cookie("sessionId", sessionId);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
+        Cookie cookie = createCookie(session.getId().toString());
         resp.addCookie(cookie);
 
         return "redirect:/";
     }
 
     @GetMapping("/login")
-    public void signIn() {
+    public String signIn(Model model) {
+        model.addAttribute("userDto", new UserDto());
+        return "sign-in";
+    }
 
+    @PostMapping("/login")
+    public String signIn(@CookieValue(value = "sessionId", required = false) String cookieSessionId, @ModelAttribute UserDto userDto, Model model, HttpServletResponse resp) {
+        Session session = authService.signIn(userDto, cookieSessionId);
+        String sessionId = session.getId().toString();
+
+        if (!cookieSessionId.equals(sessionId)) {
+            Cookie cookie = createCookie(sessionId);
+            resp.addCookie(cookie);
+        }
+
+        return "redirect:/";
     }
 
     @GetMapping("/logout")
     public void signOut() {
 
+    }
+
+    public Cookie createCookie(String sessionId) {
+        Cookie cookie = new Cookie("sessionId", sessionId);
+        cookie.setPath("/");
+        cookie.setMaxAge(-1);
+
+        return cookie;
     }
 }

@@ -7,8 +7,13 @@ import ru.weather.dto.UserDto;
 import ru.weather.exceptions.InvalidPasswordException;
 import ru.weather.exceptions.PasswordsDoNotMatchException;
 import ru.weather.exceptions.UserAlreadyExistException;
+import ru.weather.exceptions.UserNotFoundException;
 import ru.weather.mappers.UserMapper;
+import ru.weather.models.Session;
 import ru.weather.models.User;
+
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +22,9 @@ public class AuthService {
     private final SessionService sessionService;
     private final UserMapper userMapper;
 
-    public void signUp(UserDto userDto) {
-        if (userService.isUserExist(userDto.getUsername())) {
-            throw new UserAlreadyExistException("User with this login already exists");
+    public Session signUp(UserDto userDto) {
+        if (userService.isUserExist(userDto.getLogin())) {
+            throw new UserAlreadyExistException("User with this login already exists!");
         }
 
         checkPassword(userDto.getPassword(), userDto.getRepeatPassword());
@@ -27,9 +32,35 @@ public class AuthService {
 
         User user = userMapper.toUser(userDto);
         userService.createUser(user);
-        sessionService.createSession(user);
+        return sessionService.createSession(user);
     }
 
+    public Session signIn(UserDto userDto, String cookieSessionId) {
+        Optional<User> userOptional = userService.findByLogin(userDto.getLogin());
+
+        if (userOptional.isEmpty()) {
+            throw new UserNotFoundException("User not found!");
+        }
+
+        User user = userOptional.get();
+
+        if (!isCheckMathPassword(userDto)) {
+            throw new InvalidPasswordException("Invalid password!");
+        }
+
+        if (sessionService.isCorrectSessionId(cookieSessionId, user)) {
+            return sessionService.createSession(user);
+        }
+
+        Session session = sessionService.getSessionByUuid(UUID.fromString(cookieSessionId)).orElseThrow();
+
+        if (sessionService.isSessionExpired(session)) {
+            sessionService.deleteSession(session);
+            return sessionService.createSession(user);
+        }
+
+        return session;
+    }
 
     private String hashPassword(String password) {
         String salt = BCrypt.gensalt();
@@ -44,5 +75,10 @@ public class AuthService {
         if (password.length() < 8) {
             throw new InvalidPasswordException("Password must be at least 8 characters long");
         }
+    }
+
+    private boolean isCheckMathPassword(UserDto userDto) {
+        String correctPassword = userService.findByLogin(userDto.getLogin()).orElseThrow().getPassword();
+        return BCrypt.checkpw(userDto.getPassword(), correctPassword);
     }
 }
