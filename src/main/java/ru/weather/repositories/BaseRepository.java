@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.HibernateException;
 import org.springframework.transaction.annotation.Transactional;
+import ru.weather.exceptions.DataBaseException;
 
 import java.util.Optional;
 
@@ -22,7 +23,7 @@ public abstract class BaseRepository<I, E> {
             entityManager.persist(entity);
             return entity;
         } catch (HibernateException e) {
-            throw new RuntimeException(e);
+            throw new DataBaseException(e);
         }
     }
 
@@ -31,7 +32,7 @@ public abstract class BaseRepository<I, E> {
         try {
             entityManager.remove(entity);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DataBaseException(e);
         }
     }
 
@@ -40,7 +41,7 @@ public abstract class BaseRepository<I, E> {
         try {
             entityManager.merge(entity);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DataBaseException(e);
         }
     }
 
@@ -49,9 +50,7 @@ public abstract class BaseRepository<I, E> {
         try {
             return Optional.ofNullable(entityManager.find(clazz, id));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new DataBaseException(e);
         }
     }
-
-    //todo replace RuntimeException(e) on custom exception
 }
