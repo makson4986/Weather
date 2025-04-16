@@ -4,10 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import ru.weather.dto.UserDto;
-import ru.weather.exceptions.InvalidPasswordException;
-import ru.weather.exceptions.PasswordsDoNotMatchException;
-import ru.weather.exceptions.UserAlreadyExistException;
-import ru.weather.exceptions.UserNotFoundException;
+import ru.weather.exceptions.*;
 import ru.weather.mappers.UserMapper;
 import ru.weather.models.Session;
 import ru.weather.models.User;
@@ -45,7 +42,7 @@ public class AuthService {
         User user = userOptional.get();
 
         if (!isCheckMathPassword(userDto)) {
-            throw new InvalidPasswordException("Invalid password!");
+            throw new InvalidPasswordException("The password is incorrect!");
         }
 
         if (sessionService.isCorrectSessionId(cookieSessionId, user)) {
@@ -73,7 +70,7 @@ public class AuthService {
         }
 
         if (password.length() < 8) {
-            throw new InvalidPasswordException("Password must be at least 8 characters long");
+            throw new PasswordLengthException("Password must be at least 8 characters long");
         }
     }
 

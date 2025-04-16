@@ -23,13 +23,13 @@ public class AuthController {
     @GetMapping("/")
     public String index(Model model) {
         model.addAttribute("username", "test");
-        return "index";
+        return "main-page";
     }
 
     @GetMapping("/signup")
     public String signUp(Model model) {
         model.addAttribute("userDto", new UserDto());
-        return "sign-up";
+        return "registration-page";
     }
 
     @PostMapping("/signup")
@@ -45,7 +45,7 @@ public class AuthController {
     @GetMapping("/login")
     public String signIn(Model model) {
         model.addAttribute("userDto", new UserDto());
-        return "sign-in";
+        return "login-page";
     }
 
     @PostMapping("/login")

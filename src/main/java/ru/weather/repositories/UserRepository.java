@@ -2,6 +2,7 @@ package ru.weather.repositories;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import ru.weather.exceptions.DataBaseException;
 import ru.weather.models.User;
 
 import java.util.Optional;
@@ -14,12 +15,16 @@ public class UserRepository extends BaseRepository<Integer, User> {
 
     @Transactional
     public Optional<User> findByLogin(String login) {
-        User user = entityManager.createQuery("""
-                        SELECT u 
-                        FROM User u 
-                        WHERE u.login = :login""", User.class)
-                .setParameter("login", login).getSingleResultOrNull();
+        try {
+            User user = entityManager.createQuery("""
+                            SELECT u 
+                            FROM User u 
+                            WHERE u.login = :login""", User.class)
+                    .setParameter("login", login).getSingleResultOrNull();
 
-        return Optional.ofNullable(user);
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
+            throw new DataBaseException(e);
+        }
     }
 }
