@@ -28,6 +28,10 @@ public class SessionService {
         sessionRepository.delete(session);
     }
 
+    public Optional<Session> findById(UUID id) {
+        return sessionRepository.findById(id);
+    }
+
     public Optional<Session> getSessionByUuid(UUID uuid) {
         return sessionRepository.findById(uuid);
     }

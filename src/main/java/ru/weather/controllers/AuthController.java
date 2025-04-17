@@ -14,6 +14,9 @@ import ru.weather.models.Session;
 import ru.weather.services.AuthService;
 import ru.weather.services.SessionService;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Controller
 @RequiredArgsConstructor
 public class AuthController {
@@ -49,27 +52,35 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String signIn(@CookieValue(value = "sessionId", required = false) String cookieSessionId, @ModelAttribute UserDto userDto, Model model, HttpServletResponse resp) {
+    public String signIn(@CookieValue(value = "sessionId", required = false) String cookieSessionId, @ModelAttribute UserDto userDto, HttpServletResponse resp) {
         Session session = authService.signIn(userDto, cookieSessionId);
         String sessionId = session.getId().toString();
 
-        if (!cookieSessionId.equals(sessionId)) {
-            Cookie cookie = createCookie(sessionId);
-            resp.addCookie(cookie);
-        }
+        Cookie cookie = createCookie(sessionId);
+        resp.addCookie(cookie);
 
         return "redirect:/";
     }
 
-    @GetMapping("/logout")
-    public void signOut() {
+    @PostMapping("/logout")
+    public String signOut(@CookieValue(value = "sessionId", required = false) String cookieSessionId, HttpServletResponse resp) {
+        Cookie cookie = createCookie("", 0);
+        resp.addCookie(cookie);
 
+        Session session = sessionService.findById(UUID.fromString(cookieSessionId)).orElseThrow();
+        sessionService.deleteSession(session);
+
+        return "redirect:/signup";
     }
 
-    public Cookie createCookie(String sessionId) {
+    private Cookie createCookie(String sessionId) {
+        return createCookie(sessionId, -1);
+    }
+
+    private Cookie createCookie(String sessionId, Integer maxAge) {
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setPath("/");
-        cookie.setMaxAge(-1);
+        cookie.setMaxAge(maxAge);
 
         return cookie;
     }
