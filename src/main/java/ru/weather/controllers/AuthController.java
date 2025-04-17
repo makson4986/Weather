@@ -73,6 +73,11 @@ public class AuthController {
         return "redirect:/signup";
     }
 
+    @GetMapping("/error")
+    public String error() {
+        return "error-page";
+    }
+
     private Cookie createCookie(String sessionId) {
         return createCookie(sessionId, -1);
     }
