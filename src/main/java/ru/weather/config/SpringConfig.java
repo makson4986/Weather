@@ -1,5 +1,6 @@
 package ru.weather.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +13,8 @@ import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.spring6.templateresolver.SpringResourceTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import ru.weather.interceptors.AuthInterceptor;
+
+import java.net.http.HttpClient;
 
 @Configuration
 @ComponentScan("ru.weather")
@@ -54,12 +57,22 @@ public class SpringConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new AuthInterceptor())
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login", "/logout", "/signup");
+                .excludePathPatterns("/login", "/logout", "/signup", "/error");
     }
 
     @Bean
     public Logger logger() {
         return LoggerFactory.getLogger("application");
+    }
+
+    @Bean
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
     }
 
 }

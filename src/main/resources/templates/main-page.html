@@ -16,7 +16,7 @@
         </a>
         <div class="d-flex align-items-center">
             <form th:action="@{/logout}" method="post">
-                <span class="navbar-text me-3" th:text="${username}"></span>
+                <span class="navbar-text me-3" th:text="${login}"></span>
                 <button type="submit" class="btn btn-outline-danger">Sign out</button>
             </form>
         </div>
@@ -26,14 +26,15 @@
 <section id="page-content">
     <div class="container mt-4">
         <div class="d-flex my-4">
-            <div class="input-group location-search-input-group me-3">
+            <form class="input-group location-search-input-group me-3" th:action="@{/search-location}">
                 <input class="form-control" type="text" name="name" placeholder="Enter location" required>
                 <button class="btn btn-outline-secondary btn-sm clear-input-button" type="button"
                         onclick="this.previousElementSibling.value=''">
                     &times;
                 </button>
-            </div>
-            <button class="btn btn-outline-success">Search</button>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+
         </div>
 
         <div>

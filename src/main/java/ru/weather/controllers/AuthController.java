@@ -23,12 +23,6 @@ public class AuthController {
     private final AuthService authService;
     private final SessionService sessionService;
 
-    @GetMapping("/")
-    public String index(Model model) {
-        model.addAttribute("username", "test");
-        return "main-page";
-    }
-
     @GetMapping("/signup")
     public String signUp(Model model) {
         model.addAttribute("userDto", new UserDto());
