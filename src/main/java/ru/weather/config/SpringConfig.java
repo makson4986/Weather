@@ -22,6 +22,7 @@ import java.net.http.HttpClient;
 @RequiredArgsConstructor
 public class SpringConfig implements WebMvcConfigurer {
     private final ApplicationContext applicationContext;
+    private final AuthInterceptor authInterceptor;
 
     @Bean
     public SpringResourceTemplateResolver templateResolver() {
@@ -55,9 +56,8 @@ public class SpringConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new AuthInterceptor())
-                .addPathPatterns("/**")
-                .excludePathPatterns("/login", "/logout", "/signup", "/error");
+        registry.addInterceptor(authInterceptor)
+                .excludePathPatterns("/login", "/logout", "/signup");
     }
 
     @Bean

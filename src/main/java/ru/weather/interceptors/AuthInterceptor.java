@@ -1,17 +1,23 @@
 package ru.weather.interceptors;
 
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
+import ru.weather.models.Session;
+import ru.weather.services.SessionService;
 
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class AuthInterceptor implements HandlerInterceptor {
+    private final SessionService sessionService;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
@@ -20,10 +26,25 @@ public class AuthInterceptor implements HandlerInterceptor {
                 .findFirst();
 
         if (cookieOptional.isEmpty()) {
-            request.getRequestDispatcher(request.getContextPath() + "/error").forward(request, response);
+            response.sendRedirect("/signup");
             return false;
         }
 
+        Optional<Session> sessionOptional;
+
+        try {
+            sessionOptional = sessionService.findById(UUID.fromString(cookieOptional.get().getValue()));
+        } catch (IllegalArgumentException e) {
+            response.sendRedirect("/signup");
+            return false;
+        }
+
+        if (sessionOptional.isEmpty()) {
+            response.sendRedirect("/signup");
+            return false;
+        }
+
+        request.setAttribute("user", sessionOptional.get().getUser());
         return true;
     }
 }

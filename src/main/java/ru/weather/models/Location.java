@@ -21,7 +21,7 @@ public class Location {
     private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
     private BigDecimal latitude;
     private BigDecimal longitude;
 }

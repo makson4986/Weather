@@ -3,11 +3,13 @@ package ru.weather.repositories;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.hibernate.HibernateException;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.weather.exceptions.DataBaseException;
 
 import java.util.Optional;
 
+@Repository
 public abstract class BaseRepository<I, E> {
     @PersistenceContext
     protected EntityManager entityManager;
