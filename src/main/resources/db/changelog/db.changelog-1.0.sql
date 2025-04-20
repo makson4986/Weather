@@ -13,10 +13,10 @@ CREATE TABLE IF NOT EXISTS Users
 CREATE TABLE IF NOT EXISTS Locations
 (
     ID        SERIAL PRIMARY KEY,
-    Name      VARCHAR(128)                     NOT NULL,
-    User_id   INT REFERENCES Users (ID) UNIQUE NOT NULL,
-    Latitude  DECIMAL                          NOT NULL,
-    Longitude DECIMAL                          NOT NULL
+    Name      VARCHAR(128)              NOT NULL,
+    User_id   INT REFERENCES Users (ID) NOT NULL,
+    Latitude  DECIMAL                   NOT NULL,
+    Longitude DECIMAL                   NOT NULL
 );
 --rollback DROP TABLE Locations ;
 
