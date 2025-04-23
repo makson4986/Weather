@@ -10,7 +10,8 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LocationDto {
+public class IdentifiedLocationDto {
+    private Integer id;
     private String name;
     private User user;
     private BigDecimal latitude;

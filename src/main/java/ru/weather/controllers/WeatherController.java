@@ -16,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WeatherController {
     private final WeatherService weatherService;
+
     @GetMapping("/")
     public String mainPage(@RequestAttribute("user") User user,
                            Model model) {
@@ -48,7 +49,9 @@ public class WeatherController {
     }
 
     @PostMapping("/delete-location")
-    public void deleteLocation() {
-
+    public String deleteLocation(@RequestParam("id") Integer id,
+                                 @RequestAttribute("user") User user) {
+        weatherService.deleteLocationById(id);
+        return "redirect:/";
     }
 }

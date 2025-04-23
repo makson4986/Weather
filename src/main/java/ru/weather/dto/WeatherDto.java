@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherDto {
+    private Integer id;
     private String name;
     private Sys sys;
     private Main main;

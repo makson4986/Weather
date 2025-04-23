@@ -2,10 +2,12 @@ package ru.weather.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.weather.dto.IdentifiedLocationDto;
 import ru.weather.dto.LocationDto;
 import ru.weather.dto.LocationJsonDto;
 import ru.weather.dto.WeatherDto;
@@ -13,6 +15,8 @@ import ru.weather.mappers.LocationMapper;
 import ru.weather.models.Location;
 import ru.weather.repositories.LocationRepository;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,13 +29,15 @@ public class WeatherService {
     @Value("${api.key}")
     private String API_KEY;
     private final HttpClient httpClient;
-    private final ObjectMapper mapper;
+    private final ObjectMapper objectMapper;
     private final LocationMapper locationMapper;
     private final LocationRepository locationRepository;
 
     @SneakyThrows
     public List<LocationJsonDto> searchLocationByName(String name) {
-        final String query = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=5&appid=%s".formatted(name, API_KEY);
+        String query = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=5&appid=%s"
+                .formatted(name, API_KEY)
+                .replace(" ", "%20");
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
@@ -40,7 +46,8 @@ public class WeatherService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return mapper.readValue(response.body(), new TypeReference<>() {});
+        return objectMapper.readValue(response.body(), new TypeReference<>() {
+        });
     }
 
     public void addLocation(LocationDto locationDto) {
@@ -49,20 +56,24 @@ public class WeatherService {
     }
 
     public List<WeatherDto> getWeatherByLogin(String login) {
-        List<LocationDto> locations = getLocationsByLogin(login);
+        List<IdentifiedLocationDto> locations = getLocationsByLogin(login);
         return locations.stream()
                 .map(this::getWeatherLocation)
                 .toList();
     }
 
-    private List<LocationDto> getLocationsByLogin(String login) {
+    public void deleteLocationById(Integer id) {
+        locationRepository.deleteById(id);
+    }
+
+    private List<IdentifiedLocationDto> getLocationsByLogin(String login) {
         return locationRepository.getLocationsByLogin(login).stream()
-                .map(locationMapper::toLocationDto)
+                .map(locationMapper::toIdentifiedLocationDto)
                 .toList();
     }
 
     @SneakyThrows
-    private WeatherDto getWeatherLocation(LocationDto location) {
+    private WeatherDto getWeatherLocation(IdentifiedLocationDto location) {
         final String query = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=metric"
                 .formatted(location.getLatitude(), location.getLongitude(), API_KEY);
 
@@ -73,6 +84,10 @@ public class WeatherService {
 
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        return mapper.readValue(response.body(), WeatherDto.class);
+        ObjectNode jsonResponse = (ObjectNode) objectMapper.readTree(response.body());
+        jsonResponse.put("id", location.getId());
+        String stringResponse = objectMapper.writeValueAsString(jsonResponse);
+
+        return objectMapper.readValue(stringResponse, WeatherDto.class);
     }
 }

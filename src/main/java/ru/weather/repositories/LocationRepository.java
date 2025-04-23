@@ -30,4 +30,18 @@ public class LocationRepository extends BaseRepository<Integer, Location> {
             throw new DataBaseException(e);
         }
     }
+
+    @Transactional
+    public void deleteById(Integer id) {
+        try {
+            entityManager.createQuery("""
+                            DELETE 
+                            FROM Location l
+                            WHERE l.id = :id""")
+                    .setParameter("id", id)
+                    .executeUpdate();
+        } catch (Exception e) {
+            throw new DataBaseException(e);
+        }
+    }
 }

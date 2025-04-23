@@ -40,9 +40,11 @@
             <div class="row">
                 <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="location : ${weather}">
                     <div class="card h-100 position-relative weather-card">
-                        <div class="position-absolute weather-card-delete-form">
+                        <form class="position-absolute weather-card-delete-form" th:action="@{/delete-location}" method="post">
+                            <input type="hidden" name="id" th:value="${location.id}" />
+
                             <button class="btn-close" aria-label="Delete" type="submit"></button>
-                        </div>
+                        </form>
                         <img class="card-img-top img-fluid"
                              th:src="'https://openweathermap.org/img/wn/' + ${location.weather[0].icon} + '@4x.png'"
                              alt="Weather icon">
