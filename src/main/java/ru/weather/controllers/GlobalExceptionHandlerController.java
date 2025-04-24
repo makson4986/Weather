@@ -13,12 +13,6 @@ import ru.weather.exceptions.*;
 public class GlobalExceptionHandlerController {
     private final Logger logger;
 
-    @ExceptionHandler(DataBaseException.class)
-    public String handleDataBaseException(DataBaseException ex) {
-        logger.error("Database error occurred", ex);
-        return "error";
-    }
-
     @ExceptionHandler({
             PasswordsDoNotMatchException.class,
             PasswordLengthException.class,
@@ -54,7 +48,12 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler(Exception.class)
     public String handleOtherException(Exception ex) {
-        logger.warn(ex.getMessage(), ex);
+        if (ex instanceof DataBaseException) {
+            logger.error("Database error occurred", ex);
+        } else {
+            logger.error(ex.getMessage(), ex);
+        }
+
         return "error-page";
     }
 }
