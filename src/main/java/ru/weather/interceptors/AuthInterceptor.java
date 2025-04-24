@@ -44,7 +44,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        request.setAttribute("user", sessionOptional.get().getUser());
+        Session session = sessionOptional.get();
+
+        if (sessionService.isSessionExpired(session)) {
+            response.sendRedirect("/signup");
+            return false;
+        }
+
+        request.setAttribute("user", session.getUser());
         return true;
     }
 }

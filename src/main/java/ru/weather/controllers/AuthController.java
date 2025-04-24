@@ -44,8 +44,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String signIn(@CookieValue(value = "sessionId", required = false) String cookieSessionId, @ModelAttribute UserDto userDto, HttpServletResponse resp) {
-        Session session = authService.signIn(userDto, cookieSessionId);
+    public String signIn(@ModelAttribute UserDto userDto, HttpServletResponse resp) {
+        Session session = authService.signIn(userDto);
         String sessionId = session.getId().toString();
 
         Cookie cookie = createCookie(sessionId);

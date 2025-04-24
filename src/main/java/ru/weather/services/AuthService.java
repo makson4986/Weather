@@ -32,7 +32,7 @@ public class AuthService {
         return sessionService.createSession(user);
     }
 
-    public Session signIn(UserDto userDto, String cookieSessionId) {
+    public Session signIn(UserDto userDto) {
         Optional<User> userOptional = userService.findByLogin(userDto.getLogin());
 
         if (userOptional.isEmpty()) {
@@ -45,18 +45,7 @@ public class AuthService {
             throw new InvalidPasswordException("The password is incorrect!");
         }
 
-        if (sessionService.isCorrectSessionId(cookieSessionId, user)) {
-            return sessionService.createSession(user);
-        }
-
-        Session session = sessionService.findById(UUID.fromString(cookieSessionId)).orElseThrow();
-
-        if (sessionService.isSessionExpired(session)) {
-            sessionService.deleteSession(session);
-            return sessionService.createSession(user);
-        }
-
-        return session;
+        return sessionService.createSession(user);
     }
 
     private String hashPassword(String password) {
