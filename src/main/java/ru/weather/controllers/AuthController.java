@@ -5,10 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import ru.weather.dto.UserDto;
 import ru.weather.models.Session;
 import ru.weather.services.AuthService;
@@ -55,11 +52,9 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public String signOut(@CookieValue(value = "sessionId", required = false) String cookieSessionId, HttpServletResponse resp) {
+    public String signOut(@RequestParam("session") Session session, HttpServletResponse resp) {
         Cookie cookie = createCookie("", 0);
         resp.addCookie(cookie);
-
-        Session session = sessionService.findById(UUID.fromString(cookieSessionId)).orElseThrow();
         sessionService.deleteSession(session);
 
         return "redirect:/signup";
