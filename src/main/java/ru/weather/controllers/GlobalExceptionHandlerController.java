@@ -34,7 +34,6 @@ public class GlobalExceptionHandlerController {
         }
 
         logger.warn(ex.getMessage(), ex);
-        model.addAttribute("userDto", new UserDto());
         return "registration-page";
     }
 
@@ -49,8 +48,13 @@ public class GlobalExceptionHandlerController {
             model.addAttribute("isUserNotFoundException", true);
         }
 
-        logger.warn(ex.getMessage());
-        model.addAttribute("userDto", new UserDto());
+        logger.warn(ex.getMessage(), ex);
         return "login-page";
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleOtherException(Exception ex) {
+        logger.warn(ex.getMessage(), ex);
+        return "error-page";
     }
 }

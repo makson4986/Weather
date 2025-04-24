@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")

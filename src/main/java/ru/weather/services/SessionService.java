@@ -32,10 +32,6 @@ public class SessionService {
         return sessionRepository.findById(id);
     }
 
-    public Optional<Session> getSessionByUuid(UUID uuid) {
-        return sessionRepository.findById(uuid);
-    }
-
     public boolean isCorrectSessionId(String cookieSessionId, User user) {
         return cookieSessionId == null ||
                 cookieSessionId.isBlank() ||

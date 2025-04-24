@@ -24,8 +24,7 @@ public class AuthController {
     private final SessionService sessionService;
 
     @GetMapping("/signup")
-    public String signUp(Model model) {
-        model.addAttribute("userDto", new UserDto());
+    public String signUp() {
         return "registration-page";
     }
 
@@ -40,8 +39,7 @@ public class AuthController {
     }
 
     @GetMapping("/login")
-    public String signIn(Model model) {
-        model.addAttribute("userDto", new UserDto());
+    public String signIn() {
         return "login-page";
     }
 

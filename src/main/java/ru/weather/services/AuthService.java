@@ -49,7 +49,7 @@ public class AuthService {
             return sessionService.createSession(user);
         }
 
-        Session session = sessionService.getSessionByUuid(UUID.fromString(cookieSessionId)).orElseThrow();
+        Session session = sessionService.findById(UUID.fromString(cookieSessionId)).orElseThrow();
 
         if (sessionService.isSessionExpired(session)) {
             sessionService.deleteSession(session);

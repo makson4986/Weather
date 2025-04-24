@@ -49,8 +49,7 @@ public class WeatherController {
     }
 
     @PostMapping("/delete-location")
-    public String deleteLocation(@RequestParam("id") Integer id,
-                                 @RequestAttribute("user") User user) {
+    public String deleteLocation(@RequestParam("id") Integer id) {
         weatherService.deleteLocationById(id);
         return "redirect:/";
     }
