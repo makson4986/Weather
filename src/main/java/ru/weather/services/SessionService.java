@@ -32,12 +32,6 @@ public class SessionService {
         return sessionRepository.findById(id);
     }
 
-    public boolean isCorrectSessionId(String cookieSessionId, User user) {
-        return cookieSessionId == null ||
-                cookieSessionId.isBlank() ||
-                sessionRepository.findSessionsByLogin(cookieSessionId, user.getLogin()).isEmpty();
-    }
-
     public boolean isSessionExpired(Session session) {
         return LocalDateTime.now().isAfter(session.getExpiresAt());
     }

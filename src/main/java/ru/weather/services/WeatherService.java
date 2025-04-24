@@ -13,6 +13,7 @@ import ru.weather.dto.LocationJsonDto;
 import ru.weather.dto.WeatherDto;
 import ru.weather.mappers.LocationMapper;
 import ru.weather.models.Location;
+import ru.weather.models.User;
 import ru.weather.repositories.LocationRepository;
 
 import java.math.BigDecimal;
@@ -22,6 +23,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -64,6 +66,11 @@ public class WeatherService {
 
     public void deleteLocationById(Integer id) {
         locationRepository.deleteById(id);
+    }
+
+    public boolean isLocationIdBelongsToUser(Integer id, User user) {
+        Optional<Location> locationOptional = locationRepository.findById(id);
+        return locationOptional.map(location -> location.getUser().equals(user)).orElse(false);
     }
 
     private List<IdentifiedLocationDto> getLocationsByLogin(String login) {

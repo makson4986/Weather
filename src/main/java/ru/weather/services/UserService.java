@@ -2,6 +2,7 @@ package ru.weather.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.weather.models.Location;
 import ru.weather.models.User;
 import ru.weather.repositories.UserRepository;
 
