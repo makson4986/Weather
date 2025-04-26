@@ -1,10 +1,10 @@
 package ru.weather.mappers;
 
 import org.mapstruct.Mapper;
-import ru.weather.dto.LoginDto;
+import ru.weather.dto.RegistrationDto;
 import ru.weather.models.User;
 
 @Mapper(componentModel = "spring")
-public interface UserMapper {
-    User toUser(LoginDto loginDto);
+public interface RegistrationMapper {
+    User toUser(RegistrationDto registrationDto);
 }

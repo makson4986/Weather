@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.weather.dto.UserDto;
 import ru.weather.exceptions.*;
 
 @ControllerAdvice

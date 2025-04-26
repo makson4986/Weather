@@ -19,23 +19,16 @@ import java.util.Properties;
 @PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 public class DataBaseConfig {
-    private final String DRIVER;
-    private final String URL;
-    private final String USERNAME;
-    private final String PASSWORD;
-    private final Integer POOL_SIZE;
-
-    public DataBaseConfig(@Value("${db.driver}") String driver,
-                          @Value("${db.url}") String url,
-                          @Value("${db.username}") String username,
-                          @Value("${db.password}") String password,
-                          @Value("${db.pool.size}") Integer poolSize) {
-        this.DRIVER = driver;
-        this.URL = url;
-        this.USERNAME = username;
-        this.PASSWORD = password;
-        this.POOL_SIZE = poolSize;
-    }
+    @Value("${db.driver}")
+    private String DRIVER;
+    @Value("${db.url}")
+    private String URL;
+    @Value("${db.username}")
+    private String USERNAME;
+    @Value("${db.password}")
+    private String PASSWORD;
+    @Value("${db.pool.size}")
+    private Integer POOL_SIZE;
 
     @Bean
     public DataSource dataSource() {

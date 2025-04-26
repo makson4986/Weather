@@ -11,13 +11,12 @@ import ru.weather.dto.IdentifiedLocationDto;
 import ru.weather.dto.LocationDto;
 import ru.weather.dto.LocationJsonDto;
 import ru.weather.dto.WeatherDto;
+import ru.weather.mappers.IdentifiedLocationMapper;
 import ru.weather.mappers.LocationMapper;
 import ru.weather.models.Location;
 import ru.weather.models.User;
 import ru.weather.repositories.LocationRepository;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -33,6 +32,7 @@ public class WeatherService {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
     private final LocationMapper locationMapper;
+    private final IdentifiedLocationMapper identifiedLocationMapper;
     private final LocationRepository locationRepository;
 
     @SneakyThrows
@@ -75,14 +75,14 @@ public class WeatherService {
 
     private List<IdentifiedLocationDto> getLocationsByLogin(String login) {
         return locationRepository.getLocationsByLogin(login).stream()
-                .map(locationMapper::toIdentifiedLocationDto)
+                .map(identifiedLocationMapper::toIdentifiedLocationDto)
                 .toList();
     }
 
     @SneakyThrows
     private WeatherDto getWeatherLocation(IdentifiedLocationDto location) {
         final String query = "https://api.openweathermap.org/data/2.5/weather?lat=%s&lon=%s&appid=%s&units=metric"
-                .formatted(location.getLatitude(), location.getLongitude(), API_KEY);
+                .formatted(location.latitude(), location.longitude(), API_KEY);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
@@ -92,7 +92,7 @@ public class WeatherService {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         ObjectNode jsonResponse = (ObjectNode) objectMapper.readTree(response.body());
-        jsonResponse.put("id", location.getId());
+        jsonResponse.put("id", location.id());
         String stringResponse = objectMapper.writeValueAsString(jsonResponse);
 
         return objectMapper.readValue(stringResponse, WeatherDto.class);

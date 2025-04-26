@@ -3,37 +3,37 @@ package ru.weather.services;
 import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
-import ru.weather.dto.UserDto;
+import ru.weather.dto.RegistrationDto;
+import ru.weather.dto.LoginDto;
 import ru.weather.exceptions.*;
-import ru.weather.mappers.UserMapper;
+import ru.weather.mappers.RegistrationMapper;
 import ru.weather.models.Session;
 import ru.weather.models.User;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     private final UserService userService;
     private final SessionService sessionService;
-    private final UserMapper userMapper;
+    private final RegistrationMapper registrationMapper;
 
-    public Session signUp(UserDto userDto) {
-        if (userService.isUserExist(userDto.getLogin())) {
+    public Session signUp(RegistrationDto registrationDto) {
+        if (userService.isUserExist(registrationDto.login())) {
             throw new UserAlreadyExistException("User with this login already exists!");
         }
 
-        checkPassword(userDto.getPassword(), userDto.getRepeatPassword());
-        userDto.setPassword(hashPassword(userDto.getPassword()));
-
-        User user = userMapper.toUser(userDto);
+        checkPassword(registrationDto.password(), registrationDto.repeatPassword());
+        User user = registrationMapper.toUser(registrationDto);
+        user.setPassword(hashPassword(registrationDto.password()));
         userService.createUser(user);
+
         return sessionService.createSession(user);
     }
 
-    public Session signIn(UserDto userDto) {
-        Optional<User> userOptional = userService.findByLogin(userDto.getLogin());
+    public Session signIn(LoginDto loginDto) {
+        Optional<User> userOptional = userService.findByLogin(loginDto.login());
 
         if (userOptional.isEmpty()) {
             throw new UserNotFoundException("User not found!");
@@ -41,7 +41,7 @@ public class AuthService {
 
         User user = userOptional.get();
 
-        if (!isCheckMathPassword(userDto)) {
+        if (!isCheckMathPassword(loginDto)) {
             throw new InvalidPasswordException("The password is incorrect!");
         }
 
@@ -63,8 +63,8 @@ public class AuthService {
         }
     }
 
-    private boolean isCheckMathPassword(UserDto userDto) {
-        String correctPassword = userService.findByLogin(userDto.getLogin()).orElseThrow().getPassword();
-        return BCrypt.checkpw(userDto.getPassword(), correctPassword);
+    private boolean isCheckMathPassword(LoginDto loginDto) {
+        String correctPassword = userService.findByLogin(loginDto.login()).orElseThrow().getPassword();
+        return BCrypt.checkpw(loginDto.password(), correctPassword);
     }
 }

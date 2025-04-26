@@ -8,7 +8,6 @@ import ru.weather.dto.LocationDto;
 import ru.weather.dto.LocationJsonDto;
 import ru.weather.dto.WeatherDto;
 import ru.weather.models.Session;
-import ru.weather.models.User;
 import ru.weather.services.WeatherService;
 
 import java.util.List;
@@ -21,10 +20,10 @@ public class WeatherController {
     @GetMapping("/")
     public String mainPage(@RequestAttribute("session") Session session,
                            Model model) {
-        User user = session.getUser();
-        List<WeatherDto> weather = weatherService.getWeatherByLogin(user.getLogin());
+        String login = session.getUser().getLogin();
+        List<WeatherDto> weather = weatherService.getWeatherByLogin(login);
         model.addAttribute("weather", weather);
-        model.addAttribute("user", user);
+        model.addAttribute("userLogin", login);
 
         return "main-page";
 
@@ -34,21 +33,17 @@ public class WeatherController {
     public String searchLocationByName(@RequestParam("name") String name,
                                        @RequestAttribute("session") Session session,
                                        Model model) {
-        User user = session.getUser();
+        String login = session.getUser().getLogin();
         List<LocationJsonDto> locations = weatherService.searchLocationByName(name);
-        model.addAttribute("user", user);
+        model.addAttribute("userLogin", login);
         model.addAttribute("locations", locations);
 
         return "search-result";
     }
 
     @PostMapping("/add-location")
-    public String addLocation(@ModelAttribute LocationDto location,
-                              @RequestAttribute("session") Session session) {
-        User user = session.getUser();
-        location.setUser(user);
+    public String addLocation(@ModelAttribute LocationDto location) {
         weatherService.addLocation(location);
-
         return "redirect:/";
     }
 

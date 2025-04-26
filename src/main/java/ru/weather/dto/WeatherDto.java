@@ -2,45 +2,33 @@ package ru.weather.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.util.List;
 
-@Data
-@NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WeatherDto {
-    private Integer id;
-    private String name;
-    private Sys sys;
-    private Main main;
-    private List<Weather> weather;
+public record WeatherDto(
+        Integer id,
+        String name,
+        Sys sys,
+        Main main,
+        List<Weather> weather) {
 
-    @Data
-    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Sys {
-        private String country;
+    public record Sys(String country) {
     }
 
-    @Data
-    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Main {
-        @JsonProperty("temp")
-        private float temperature;
-        @JsonProperty("feels_like")
-        private float feelsLike;
-        private float humidity;
+    public record Main(
+            @JsonProperty("temp") float temperature,
+            @JsonProperty("feels_like") float feelsLike,
+            float humidity) {
     }
 
-    @Data
-    @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Weather {
-        private String description;
-        private String icon;
+    public record Weather(
+            String description,
+            String icon) {
     }
 }
 

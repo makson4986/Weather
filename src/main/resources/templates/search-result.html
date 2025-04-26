@@ -11,12 +11,13 @@
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
-            <img src="../static/images/weather-app.png" alt="" width="30" height="24" class="d-inline-block align-text-top">
+            <img src="../static/images/weather-app.png" alt="" width="30" height="24"
+                 class="d-inline-block align-text-top">
             Weather Tracker
         </a>
         <div class="d-flex align-items-center">
             <form th:action="@{/logout}" method="post">
-                <span class="navbar-text me-3" th:text="${user.login}"></span>
+                <span class="navbar-text me-3" th:text="${userLogin}"></span>
                 <button type="submit" class="btn btn-outline-danger">Sign out</button>
             </form>
         </div>
@@ -43,15 +44,16 @@
                 <div class="col-12 col-lg-3 col-md-6 mb-4" th:each="location : ${locations}">
                     <div class="card h-100">
                         <form class="card-body d-flex flex-column" th:action="@{/add-location}" method="post">
-                            <h5 class="card-title" th:text="${location.getName()}"></h5>
-                            <p class="card-text mb-1" th:text="|Latitude: ${location.latitude}|"/>
-                            <p class="card-text mb-1" th:text="|Longitude: ${location.longitude}|"/>
-                            <p class="card-text mb-1" th:text="|Country: ${location.country}|"/>
-                            <p class="card-text mb-3" th:text="|State: ${location.state}|"/>
+                            <h5 class="card-title" th:text="${location.name()}"></h5>
+                            <p class="card-text mb-1" th:text="|Latitude: ${location.latitude()}|"/>
+                            <p class="card-text mb-1" th:text="|Longitude: ${location.longitude()}|"/>
+                            <p class="card-text mb-1" th:text="|Country: ${location.country()}|"/>
+                            <p class="card-text mb-3" th:text="|State: ${location.state()}|"/>
 
-                            <input type="hidden" name="name" th:value="${location.name}" />
-                            <input type="hidden" name="latitude" th:value="${location.latitude}" />
-                            <input type="hidden" name="longitude" th:value="${location.longitude}" />
+                            <input type="hidden" name="name" th:value="${location.name()}"/>
+                            <input type="hidden" name="userLogin" th:value="${userLogin}"/>
+                            <input type="hidden" name="latitude" th:value="${location.latitude()}"/>
+                            <input type="hidden" name="longitude" th:value="${location.longitude()}"/>
 
                             <div class="mt-auto">
                                 <button class="btn btn-primary w-100" type="submit">Add</button>
