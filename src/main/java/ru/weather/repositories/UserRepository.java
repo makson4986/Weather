@@ -2,6 +2,7 @@ package ru.weather.repositories;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import ru.weather.exceptions.DataBaseException;
 import ru.weather.models.User;
 
@@ -9,8 +10,8 @@ import java.util.Optional;
 
 @Repository
 public class UserRepository extends BaseRepository<Integer, User> {
-    public UserRepository() {
-        super(User.class);
+    public UserRepository(TransactionTemplate transactionTemplate) {
+        super(transactionTemplate, User.class);
     }
 
     @Transactional
