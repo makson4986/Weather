@@ -9,6 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import ru.weather.models.Session;
 import ru.weather.services.SessionService;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.UUID;
