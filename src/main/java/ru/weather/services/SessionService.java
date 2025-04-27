@@ -1,6 +1,7 @@
 package ru.weather.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.weather.models.Session;
 import ru.weather.models.User;
@@ -14,11 +15,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SessionService {
     private final SessionRepository sessionRepository;
+    @Value("${session.duration.days}")
+    private int SESSION_DURATION_DAYS;
 
     public Session createSession(User user) {
         Session session = Session.builder()
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusDays(14))
+                .expiresAt(LocalDateTime.now().plusDays(SESSION_DURATION_DAYS))
                 .build();
 
         return sessionRepository.save(session);
