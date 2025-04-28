@@ -27,7 +27,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 .findFirst();
 
         if (cookieOptional.isEmpty()) {
-            response.sendRedirect("/signup");
+            response.sendRedirect(request.getContextPath() + "/signup");
             return false;
         }
 
@@ -36,19 +36,19 @@ public class AuthInterceptor implements HandlerInterceptor {
         try {
             sessionOptional = sessionService.findById(UUID.fromString(cookieOptional.get().getValue()));
         } catch (IllegalArgumentException e) {
-            response.sendRedirect("/signup");
+            response.sendRedirect(request.getContextPath() + "/signup");
             return false;
         }
 
         if (sessionOptional.isEmpty()) {
-            response.sendRedirect("/signup");
+            response.sendRedirect(request.getContextPath() + "/signup");
             return false;
         }
 
         Session session = sessionOptional.get();
 
         if (sessionService.isSessionExpired(session)) {
-            response.sendRedirect("/signup");
+            response.sendRedirect(request.getContextPath() + "/signup");
             return false;
         }
 
