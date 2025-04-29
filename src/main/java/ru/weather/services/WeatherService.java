@@ -93,6 +93,7 @@ public class WeatherService {
 
         ObjectNode jsonResponse = (ObjectNode) objectMapper.readTree(response.body());
         jsonResponse.put("id", location.id());
+        jsonResponse.put("name", location.name());
         String stringResponse = objectMapper.writeValueAsString(jsonResponse);
 
         return objectMapper.readValue(stringResponse, WeatherDto.class);

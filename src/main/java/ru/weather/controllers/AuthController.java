@@ -65,6 +65,7 @@ public class AuthController {
     private Cookie createCookie(String sessionId, Integer maxAge) {
         Cookie cookie = new Cookie("sessionId", sessionId);
         cookie.setPath("/");
+        cookie.setHttpOnly(true);
         cookie.setMaxAge(maxAge);
 
         return cookie;

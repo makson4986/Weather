@@ -20,7 +20,7 @@ public record WeatherDto(
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public record Main(
-            @JsonProperty("temp") float temperature,
+            @JsonProperty("temp") int temperature,
             @JsonProperty("feels_like") float feelsLike,
             float humidity) {
     }
