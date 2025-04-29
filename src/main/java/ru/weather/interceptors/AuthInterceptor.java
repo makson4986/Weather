@@ -22,9 +22,16 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
-        Optional<Cookie> cookieOptional = Arrays.stream(cookies).
-                filter(cookie -> cookie.getName().equals("sessionId"))
-                .findFirst();
+        Optional<Cookie> cookieOptional;
+
+        if (cookies != null) {
+            cookieOptional = Arrays.stream(cookies).
+                    filter(cookie -> cookie.getName().equals("sessionId"))
+                    .findFirst();
+        } else {
+            response.sendRedirect(request.getContextPath() + "/signup");
+            return false;
+        }
 
         if (cookieOptional.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/signup");

@@ -46,13 +46,14 @@ public class GlobalExceptionHandlerController {
     }
 
     @ExceptionHandler(Exception.class)
-    public String handleOtherException(Exception ex) {
+    public String handleOtherException(Exception ex, Model model) {
         if (ex instanceof DataBaseException) {
             logger.error("Database error occurred", ex);
         } else {
             logger.error(ex.getMessage(), ex);
         }
 
+        model.addAttribute("exceptionText", ex);
         return "error-page";
     }
 }
