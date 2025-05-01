@@ -26,7 +26,7 @@ public class DataValidator {
             throw new InvalidLocationNameException("The location name must be between 3 and 32 characters");
         } else if (!name.substring(0,1).matches("[A-ZА-ЯЁ]")) {
             throw new InvalidLocationNameException("The location name must start with a capital letter");
-        } else if (!name.matches("^[A-Za-zА-ЯЁ][A-Za-zа-яё'’ -]*$")) {
+        } else if (!name.matches("^[A-Za-zÀ-ÖØ-öø-ÿА-ЯЁа-яё'’ -]+$")) {
             throw new InvalidLocationNameException("The name contains invalid characters");
         }
     }
