@@ -21,10 +21,10 @@ public class AuthService {
 
     public Session signUp(RegistrationDto registrationDto) {
         if (userService.isUserExist(registrationDto.login())) {
-            throw new UserAlreadyExistException("User with this login already exists!");
+            throw new UserAlreadyExistException("Account with this username already exists");
         }
 
-        checkPassword(registrationDto.password(), registrationDto.repeatPassword());
+        checkMatchPasswords(registrationDto.password(), registrationDto.repeatPassword());
         User user = registrationMapper.toUser(registrationDto);
         user.setPassword(hashPassword(registrationDto.password()));
         userService.createUser(user);
@@ -41,8 +41,8 @@ public class AuthService {
 
         User user = userOptional.get();
 
-        if (!isCheckMathPassword(loginDto)) {
-            throw new InvalidPasswordException("The password is incorrect!");
+        if (!verifyPassword(loginDto)) {
+            throw new PasswordVerificationException("The password is incorrect!");
         }
 
         return sessionService.createSession(user);
@@ -53,17 +53,13 @@ public class AuthService {
         return BCrypt.hashpw(password, salt);
     }
 
-    private void checkPassword(String password, String repeatPassword) {
+    private void checkMatchPasswords(String password, String repeatPassword) {
         if (!password.equals(repeatPassword)) {
-            throw new PasswordsDoNotMatchException("Passwords do not match");
-        }
-
-        if (password.length() < 8) {
-            throw new PasswordLengthException("Password must be at least 8 characters long");
+            throw new PasswordsDoNotMatchException("Passwords don't match");
         }
     }
 
-    private boolean isCheckMathPassword(LoginDto loginDto) {
+    private boolean verifyPassword(LoginDto loginDto) {
         String correctPassword = userService.findByLogin(loginDto.login()).orElseThrow().getPassword();
         return BCrypt.checkpw(loginDto.password(), correctPassword);
     }

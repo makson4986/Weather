@@ -14,35 +14,44 @@ public class GlobalExceptionHandlerController {
 
     @ExceptionHandler({
             PasswordsDoNotMatchException.class,
-            PasswordLengthException.class,
-            UserAlreadyExistException.class
+            UserAlreadyExistException.class,
+            InvalidLoginException.class,
+            InvalidPasswordException.class
     })
     public String handleSignUpException(Exception ex, Model model) {
-        if (ex instanceof PasswordsDoNotMatchException) {
-            model.addAttribute("isPasswordDoNotMatchException", true);
-        } else if (ex instanceof PasswordLengthException) {
-            model.addAttribute("isPasswordLengthException", true);
-        } else if (ex instanceof UserAlreadyExistException) {
-            model.addAttribute("isUserAlreadyExistException", true);
+        if (ex instanceof PasswordsDoNotMatchException || ex instanceof InvalidPasswordException) {
+            model.addAttribute("passwordException", true);
+        } else if (ex instanceof UserAlreadyExistException || ex instanceof InvalidLoginException) {
+            model.addAttribute("loginException", true);
         }
 
         logger.warn(ex.getMessage(), ex);
+        model.addAttribute("exceptionText", ex.getMessage());
         return "registration-page";
     }
 
     @ExceptionHandler({
-            InvalidPasswordException.class,
+            PasswordVerificationException.class,
             UserNotFoundException.class
     })
     public String handleSignInException(Exception ex, Model model) {
-        if (ex instanceof InvalidPasswordException) {
-            model.addAttribute("isInvalidPasswordException", true);
+        if (ex instanceof PasswordVerificationException) {
+            model.addAttribute("passwordException", true);
         } else if (ex instanceof UserNotFoundException) {
-            model.addAttribute("isUserNotFoundException", true);
+            model.addAttribute("loginException", true);
         }
 
         logger.warn(ex.getMessage(), ex);
         return "login-page";
+    }
+
+    @ExceptionHandler(InvalidLocationNameException.class)
+    public String handleInvalidLocationNameException(Exception ex, Model model) {
+        model.addAttribute("locationNameException", true);
+        model.addAttribute("exceptionText", ex.getMessage());
+
+        logger.warn(ex.getMessage(), ex);
+        return "search-result";
     }
 
     @ExceptionHandler(Exception.class)

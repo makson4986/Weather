@@ -1,7 +1,6 @@
 package ru.weather.controllers;
 
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -11,6 +10,7 @@ import ru.weather.dto.RegistrationDto;
 import ru.weather.models.Session;
 import ru.weather.services.AuthService;
 import ru.weather.services.SessionService;
+import ru.weather.utils.DataValidator;
 
 @Controller
 @RequiredArgsConstructor
@@ -25,6 +25,9 @@ public class AuthController {
 
     @PostMapping("/signup")
     public String signUp(@ModelAttribute RegistrationDto registrationDto, HttpServletResponse resp) {
+        DataValidator.checkValidLogin(registrationDto.login());
+        DataValidator.checkValidPassword(registrationDto.password());
+
         Session session = authService.signUp(registrationDto);
 
         Cookie cookie = createCookie(session.getId().toString());

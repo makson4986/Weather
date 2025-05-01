@@ -9,6 +9,7 @@ import ru.weather.dto.LocationJsonDto;
 import ru.weather.dto.WeatherDto;
 import ru.weather.models.Session;
 import ru.weather.services.WeatherService;
+import ru.weather.utils.DataValidator;
 
 import java.util.List;
 
@@ -33,6 +34,8 @@ public class WeatherController {
     public String searchLocationByName(@RequestParam("name") String name,
                                        @RequestAttribute("session") Session session,
                                        Model model) {
+        DataValidator.checkValidLocationName(name);
+
         String login = session.getUser().getLogin();
         List<LocationJsonDto> locations = weatherService.searchLocationByName(name);
         model.addAttribute("userLogin", login);

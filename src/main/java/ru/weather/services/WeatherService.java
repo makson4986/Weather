@@ -37,7 +37,7 @@ public class WeatherService {
 
     @SneakyThrows
     public List<LocationJsonDto> searchLocationByName(String name) {
-        String query = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=5&appid=%s"
+        String query = "https://api.openweathermap.org/geo/1.0/direct?q=%s&limit=1000&appid=%s"
                 .formatted(name, API_KEY)
                 .replace(" ", "%20");
 
